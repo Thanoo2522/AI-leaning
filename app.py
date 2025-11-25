@@ -7,6 +7,11 @@ import tensorflow.lite as tflite
 import firebase_admin
 from firebase_admin import credentials, storage
 
+from tflite_runtime.interpreter import Interpreter
+interpreter = Interpreter(model_path=local_path)
+interpreter.allocate_tensors()
+
+
 # -------------------------------
 # 1) Firebase Init
 # -------------------------------
