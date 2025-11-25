@@ -1,0 +1,13 @@
+Flask
+gunicorn
+numpy==1.24.3
+pillow==10.2.0
+
+# Firebase Admin SDK
+firebase-admin
+
+# TensorFlow Lite Interpreter (ใช้จาก tflite_runtime)
+tflite-runtime==2.13.0
+
+
+ 
