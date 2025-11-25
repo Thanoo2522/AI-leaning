@@ -9,7 +9,7 @@ from firebase_admin import credentials, storage
 
 # -------------------------------
 # 1) Firebase Init
-# -------------------------------
+# ---------------------------------
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
