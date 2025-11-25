@@ -26,7 +26,7 @@ firebase_admin.initialize_app(cred, {
 
 bucket = storage.bucket()
 
-# -------------------------------
+# ---------------------------------
 # 2) โหลด TFLite model จาก Firebase Storage
 # -------------------------------
 local_path = os.path.join(UPLOAD_FOLDER, "model.tflite")
