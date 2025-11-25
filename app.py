@@ -3,14 +3,9 @@ import json
 from flask import Flask, request, jsonify
 from PIL import Image
 import numpy as np
-import tensorflow.lite as tflite
+from tflite_runtime.interpreter import Interpreter
 import firebase_admin
 from firebase_admin import credentials, storage
-
-from tflite_runtime.interpreter import Interpreter
-interpreter = Interpreter(model_path=local_path)
-interpreter.allocate_tensors()
-
 
 # -------------------------------
 # 1) Firebase Init
@@ -34,28 +29,24 @@ bucket = storage.bucket()
 # -------------------------------
 # 2) โหลด TFLite model จาก Firebase Storage
 # -------------------------------
-print("Downloading model from Firebase...")
-
 local_path = os.path.join(UPLOAD_FOLDER, "model.tflite")
 blob = bucket.blob("test_AI_Leaning_kit/model.tflite")
 blob.download_to_filename(local_path)
-
 print(f"Model downloaded → {local_path}")
 
 # -------------------------------
-# 3) Load TFLite Model (load once)
+# 3) Load TFLite Model
 # -------------------------------
-interpreter = tflite.Interpreter(model_path=local_path)
+interpreter = Interpreter(model_path=local_path)
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-# Mapping index → class name
 CLASS_NAMES = ["red", "yellow", "pink"]
 
 # -------------------------------
-# Flask Server
+# 4) Flask Server
 # -------------------------------
 app = Flask(__name__)
 
@@ -65,19 +56,15 @@ def classify():
         return jsonify({"error": "No image uploaded"}), 400
 
     file = request.files["image"]
-
     img = Image.open(file.stream).convert("RGB")
     img = img.resize((224, 224))
-
     img_array = np.array(img, dtype=np.float32) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    # Run inference
     interpreter.set_tensor(input_details[0]["index"], img_array)
     interpreter.invoke()
-    prediction = interpreter.get_tensor(output_details[0]["index"])[0]  # shape = (3,)
+    prediction = interpreter.get_tensor(output_details[0]["index"])[0]
 
-    # หาค่า score ที่มากที่สุด
     max_index = int(np.argmax(prediction))
     color = CLASS_NAMES[max_index]
 
@@ -91,4 +78,4 @@ def classify():
     })
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=10000)

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+uploads/
+model.tflite
+.env
+FIREBASE_SERVICE_KEY.json
